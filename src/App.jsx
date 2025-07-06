@@ -3,6 +3,9 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { useLoginMutation, useRegisterMutation } from './store/api/authEndpoints';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import PublicLayout from './public/publicLayout';
+import Home from './public/Home';
 
 function App() {
   const [login, { isLoading: isLoggingIn }] = useLoginMutation();
@@ -22,7 +25,13 @@ function App() {
   
   return (
     <>
-      <h1 className='text-4xl font-bold bg-red-200'>Hello World</h1>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<PublicLayout />} >
+            <Route index element={<Home />}/>
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
