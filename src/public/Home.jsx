@@ -7,7 +7,7 @@ const NewsCard = ({ title, category, excerpt, time, image, isFeatured = false })
     <div className={`group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${isFeatured ? 'md:col-span-2' : ''}`}>
       <div className="relative">
         <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-48" />
-        <div className="absolute top-4 left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+        <div className="absolute top-4 left-4 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
           {category}
         </div>
         <div className="absolute top-4 right-4 flex space-x-2">
@@ -24,11 +24,11 @@ const NewsCard = ({ title, category, excerpt, time, image, isFeatured = false })
           <FiClock className="mr-1" />
           <span>{time} ago</span>
         </div>
-        <h3 className={`font-bold mb-2 ${isFeatured ? 'text-2xl' : 'text-xl'} group-hover:text-blue-600 transition-colors`}>
+        <h3 className={`font-bold mb-2 ${isFeatured ? 'text-2xl' : 'text-xl'} group-hover:text-red-700 transition-colors`}>
           {title}
         </h3>
         <p className="text-gray-600">{excerpt}</p>
-        <button className="mt-4 text-blue-600 font-medium hover:text-blue-800 flex items-center transition-colors">
+        <button className="mt-4 text-red-700 font-medium hover:text-blue-800 flex items-center transition-colors">
           Read more
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -44,7 +44,7 @@ const CategorySection = ({ title, newsItems }) => {
     <section className="mb-12">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-        <a href="#" className="text-blue-600 font-medium hover:text-blue-800 transition-colors">
+        <a href="#" className="text-red-700 font-medium hover:text-blue-800 transition-colors">
           View all
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -65,8 +65,8 @@ const TrendingItem = ({ rank, title, category }) => {
     <div className="flex items-start py-3 border-b border-gray-100 last:border-0">
       <div className="text-2xl font-bold text-gray-300 mr-4">{rank}</div>
       <div>
-        <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">{category}</span>
-        <h3 className="font-medium text-gray-900 mt-1 hover:text-blue-600 cursor-pointer transition-colors">{title}</h3>
+        <span className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-full">{category}</span>
+        <h3 className="font-medium text-gray-900 mt-1 hover:text-red-700 cursor-pointer transition-colors">{title}</h3>
       </div>
     </div>
   );
@@ -279,7 +279,7 @@ const Home = () => {
                   placeholder="Your email"
                   className="w-full px-4 py-2 rounded-l-lg text-gray-900 focus:outline-none"
                 />
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition-colors">
+                <button className="bg-purple-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition-colors">
                   Subscribe
                 </button>
               </div>
