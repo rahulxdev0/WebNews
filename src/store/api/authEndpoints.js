@@ -10,9 +10,17 @@ export const userEndpoints = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Auth'],
         }),
-        register: builder.mutation({
+        registerUser: builder.mutation({
             query: (userData) => ({
-                url: '/auth/register/',
+                url: '/auth/register/user/',
+                method: 'POST',
+                body: userData,
+            }),
+            invalidatesTags: ['Auth'],
+        }),
+        registerAdmin: builder.mutation({
+            query: (userData) => ({
+                url: '/auth/register/admin/',
                 method: 'POST',
                 body: userData,
             }),
@@ -28,4 +36,4 @@ export const userEndpoints = baseApi.injectEndpoints({
     })
 })
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation } = userEndpoints;
+export const { useLoginMutation, useRegisterUserMutation, useRegisterAdminMutation, useLogoutMutation } = userEndpoints;
