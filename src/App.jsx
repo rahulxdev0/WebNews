@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PublicLayout from './public/publicLayout';
 import Home from './public/Home';
+import AdminLayout from './admin/AdminLayout';
+import AdminDashboard from './admin/AdminDashboard';
 
 function App() {
   
@@ -14,6 +13,9 @@ function App() {
         <Routes>
           <Route path="/" element={<PublicLayout />} >
             <Route index element={<Home />}/>
+          </Route>
+          <Route path="/admin" element={<AdminLayout />} >
+            <Route index element={<AdminDashboard />}/>
           </Route>
         </Routes>
       </BrowserRouter>
