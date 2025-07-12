@@ -7,6 +7,11 @@ export const baseApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: apiUrl,
     credentials: 'include',
+    prepareHeaders: (headers, { getState }) => {
+    // For debugging
+     console.log('Cookies being sent:', document.cookie);
+    return headers;
+  },
   }),
   tagTypes: ['Auth', 'Category', 'Post', 'Comment'],
   endpoints: () => ({}),

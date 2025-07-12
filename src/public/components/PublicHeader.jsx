@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { FiSearch, FiMenu, FiX, FiUser, FiSun, FiMoon } from "react-icons/fi";
+import { useState, useEffect, useRef } from "react";
+import { FiSearch, FiMenu, FiX, FiUser, FiSun, FiMoon, FiChevronDown, FiLogOut } from "react-icons/fi";
 import AuthModal from "./AuthModal";
+import { useUserInfoQuery } from "../../store/api/authEndpoints";
 
 const PublicHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -8,6 +9,12 @@ const PublicHeader = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  
+  const dropdownRef = useRef(null);
+
+  const {data} = useUserInfoQuery();
+  console.log("user info", data);
 
   // Handle scroll effect
   useEffect(() => {
@@ -18,9 +25,28 @@ const PublicHeader = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleCloseModal = () => {
     setIsAuthModalOpen(false)
   }
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("Logging out...");
+    setIsUserDropdownOpen(false);
+    // You might want to call a logout mutation here
+  };
 
   const navItems = [
     { name: "Home", href: "#" },
@@ -82,13 +108,74 @@ const PublicHeader = () => {
                 {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
               </button>
 
-              {/* User */}
-              <button
-                onClick={() => setIsAuthModalOpen(true)}
-                className="p-2 text-gray-700  hover:text-red-600 "
-              >
-                <FiUser size={20} />
-              </button>
+              {/* User Section */}
+              {data && data.username ? (
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                    className="flex items-center space-x-2 p-2 text-gray-700 hover:text-red-600 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">
+                        {data.username.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <span className="hidden sm:block text-sm font-medium">
+                      {data.username}
+                    </span>
+                    <FiChevronDown size={16} className={`transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isUserDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                            <span className="text-white font-medium">
+                              {data.username.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-900">
+                              {data.full_name || data.username}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {data.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="px-4 py-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">Role:</span>
+                          <span className="text-sm font-medium text-gray-900 capitalize">
+                            {data.role}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="border-t border-gray-200 pt-2">
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <FiLogOut size={16} />
+                          <span>Logout</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="p-2 text-gray-700  hover:text-red-600 "
+                >
+                  <FiUser size={20} />
+                </button>
+              )}
 
               {/* Mobile Menu Button */}
               <button
@@ -134,14 +221,49 @@ const PublicHeader = () => {
                     {item.name}
                   </a>
                 ))}
-                <div className="mt-4 pt-4 border-t  flex justify-center space-x-6">
-                  <button className="p-2">
-                    <FiUser size={24} />
-                  </button>
-                  <button className="p-2">
-                    <FiSearch size={24} />
-                  </button>
-                </div>
+                
+                {/* Mobile User Section */}
+                {data && data.username ? (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center space-x-3 px-4 py-3">
+                      <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                        <span className="text-white font-medium">
+                          {data.username.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {data.full_name || data.username}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {data.email}
+                        </p>
+                        <p className="text-xs text-gray-500 capitalize">
+                          Role: {data.role}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center space-x-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <FiLogOut size={16} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-4 pt-4 border-t border-gray-200 flex justify-center space-x-6">
+                    <button 
+                      onClick={() => setIsAuthModalOpen(true)}
+                      className="p-2"
+                    >
+                      <FiUser size={24} />
+                    </button>
+                    <button className="p-2">
+                      <FiSearch size={24} />
+                    </button>
+                  </div>
+                )}
               </nav>
             </div>
           </div>
