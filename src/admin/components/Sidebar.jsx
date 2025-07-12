@@ -1,16 +1,14 @@
-import { BarChart3, FileText, Home, Settings, User, Users } from "lucide-react";
+import { BarChart3, FileText, Home, Settings, User, Users, MapPin, Map, Newspaper } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
   const [activeItem, setActiveItem] = useState('dashboard');
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'users', label: 'Users', icon: Users },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'settings', label: 'Settings', icon: Settings },
-  ];
+  const handleLinkClick = (itemId) => {
+    setActiveItem(itemId);
+    // Add your navigation logic here
+  };
 
   return (
     <>
@@ -40,25 +38,101 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveItem(item.id)}
-                  className={`
-                    w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
-                    ${activeItem === item.id 
-                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' 
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    }
-                  `}
-                >
-                  <Icon size={20} />
-                  <span className="font-medium">{item.label}</span>
-                </button>
-              );
-            })}
+            <Link
+              to="/admin"
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+                ${activeItem === 'dashboard' 
+                  ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' 
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }
+              `}
+            >
+              <Home size={20} />
+              <span className="font-medium">Dashboard</span>
+            </Link>
+
+            <Link
+              to="/admin/manage-category"
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+              `}
+            >
+              <BarChart3 size={20} />
+              <span className="font-medium">Manage Category</span>
+            </Link>
+
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('manage-pincode');
+              }}
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+                ${activeItem === 'manage-pincode' 
+                  ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' 
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }
+              `}
+            >
+              <MapPin size={20} />
+              <span className="font-medium">Manage Pincode</span>
+            </a>
+
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('manage-area');
+              }}
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+                ${activeItem === 'manage-area' 
+                  ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' 
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }
+              `}
+            >
+              <Map size={20} />
+              <span className="font-medium">Manage Area</span>
+            </a>
+
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('manage-news');
+              }}
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+                ${activeItem === 'manage-news' 
+                  ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' 
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }
+              `}
+            >
+              <Newspaper size={20} />
+              <span className="font-medium">Manage News</span>
+            </a>
+
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('settings');
+              }}
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
+                ${activeItem === 'settings' 
+                  ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' 
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }
+              `}
+            >
+              <Settings size={20} />
+              <span className="font-medium">Settings</span>
+            </a>
           </nav>
 
           {/* Footer */}
