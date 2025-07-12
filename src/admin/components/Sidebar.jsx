@@ -62,12 +62,8 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
               <span className="font-medium">Manage Category</span>
             </Link>
 
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleLinkClick('manage-pincode');
-              }}
+            <Link
+              to="/admin/manage-district"
               className={`
                 w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
                 ${activeItem === 'manage-pincode' 
@@ -77,8 +73,8 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
               `}
             >
               <MapPin size={20} />
-              <span className="font-medium">Manage Pincode</span>
-            </a>
+              <span className="font-medium">Manage Districts</span>
+            </Link>
 
             <a
               href="#"
