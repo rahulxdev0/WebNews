@@ -5,7 +5,7 @@ export const areaEndpoints = baseApi.injectEndpoints({
     // Get all areas
     getAreas: builder.query({
       query: () => ({
-        url: "/area/",
+        url: "/areas/",
         method: "GET",
       }),
       providesTags: ["Areas"],
@@ -14,7 +14,7 @@ export const areaEndpoints = baseApi.injectEndpoints({
     // Get single area by ID
     getArea: builder.query({
       query: (id) => ({
-        url: `/area/${id}/`,
+        url: `/areas/${id}/`,
         method: "GET",
       }),
       providesTags: (result, error, id) => [{ type: "Areas", id }],
@@ -23,7 +23,7 @@ export const areaEndpoints = baseApi.injectEndpoints({
     // Create new area
     createArea: builder.mutation({
       query: (areaData) => ({
-        url: "/area/",
+        url: "/areas/",
         method: "POST",
         body: areaData,
       }),
@@ -33,7 +33,7 @@ export const areaEndpoints = baseApi.injectEndpoints({
     // Full update of area
     updateArea: builder.mutation({
       query: ({ id, ...areaData }) => ({
-        url: `/area/${id}/`,
+        url: `/areas/${id}/`,
         method: "PUT",
         body: areaData,
       }),
@@ -46,7 +46,7 @@ export const areaEndpoints = baseApi.injectEndpoints({
     // Partial update of area
     partialUpdateArea: builder.mutation({
       query: ({ id, ...partialData }) => ({
-        url: `/area/${id}/`,
+        url: `/areas/${id}/`,
         method: "PATCH",
         body: partialData,
       }),
@@ -59,7 +59,7 @@ export const areaEndpoints = baseApi.injectEndpoints({
     // Delete area
     deleteArea: builder.mutation({
       query: (id) => ({
-        url: `/area/${id}/`,
+        url: `/areas/${id}/`,
         method: "DELETE",
       }),
       invalidatesTags: ["Areas"],

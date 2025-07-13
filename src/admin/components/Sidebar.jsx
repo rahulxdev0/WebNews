@@ -76,12 +76,8 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
               <span className="font-medium">Manage Districts</span>
             </Link>
 
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleLinkClick('manage-area');
-              }}
+            <Link
+              to="/admin/manage-area"
               className={`
                 w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
                 ${activeItem === 'manage-area' 
@@ -92,7 +88,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
             >
               <Map size={20} />
               <span className="font-medium">Manage Area</span>
-            </a>
+            </Link>
 
             <a
               href="#"
