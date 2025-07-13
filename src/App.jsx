@@ -7,6 +7,7 @@ import AdminDashboard from './admin/AdminDashboard';
 import ManageCategory from './admin/manageCategory/ManageCategory';
 import ManageDistricts from './admin/manageDistricts/ManageDistricts';
 import ManageAreas from './admin/manageArea/ManageAreas';
+import ManageNews from './admin/manageNews/ManageNews';
 
 function App() {
   
@@ -22,6 +23,7 @@ function App() {
             <Route path='manage-category' element={<ManageCategory />} />
             <Route path='manage-district' element={<ManageDistricts />} />
             <Route path='manage-area' element={<ManageAreas />} />
+            <Route path='manage-news' element={<ManageNews />} />
           </Route>
         </Routes>
       </BrowserRouter>

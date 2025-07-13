@@ -90,12 +90,8 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
               <span className="font-medium">Manage Area</span>
             </Link>
 
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleLinkClick('manage-news');
-              }}
+            <Link
+              to="/admin/manage-news"
               className={`
                 w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors
                 ${activeItem === 'manage-news' 
@@ -106,7 +102,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
             >
               <Newspaper size={20} />
               <span className="font-medium">Manage News</span>
-            </a>
+            </Link>
 
             <a
               href="#"
