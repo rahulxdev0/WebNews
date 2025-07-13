@@ -1,7 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import { FiSearch, FiMenu, FiX, FiUser, FiSun, FiMoon, FiChevronDown, FiLogOut } from "react-icons/fi";
+import {
+  FiSearch,
+  FiMenu,
+  FiX,
+  FiUser,
+  FiSun,
+  FiMoon,
+  FiChevronDown,
+  FiLogOut,
+} from "react-icons/fi";
 import AuthModal from "./AuthModal";
 import { useUserInfoQuery } from "../../store/api/authEndpoints";
+import AdminRegisterModal from "./AdminRegisterModal";
 
 const PublicHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,10 +20,11 @@ const PublicHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const dropdownRef = useRef(null);
 
-  const {data} = useUserInfoQuery();
+  const { data } = useUserInfoQuery();
   console.log("user info", data);
 
   // Handle scroll effect
@@ -38,8 +49,8 @@ const PublicHeader = () => {
   }, []);
 
   const handleCloseModal = () => {
-    setIsAuthModalOpen(false)
-  }
+    setIsAuthModalOpen(false);
+  };
 
   const handleLogout = () => {
     // Add your logout logic here
@@ -90,6 +101,15 @@ const PublicHeader = () => {
               ))}
             </nav>
 
+            <div className="flex justify-center">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="px-4 py-2 text-base  font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+              >
+                Become Author
+              </button>
+            </div>
+
             {/* Right Icons */}
             <div className="flex items-center space-x-4">
               {/* Search */}
@@ -123,7 +143,12 @@ const PublicHeader = () => {
                     <span className="hidden sm:block text-sm font-medium">
                       {data.username}
                     </span>
-                    <FiChevronDown size={16} className={`transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                    <FiChevronDown
+                      size={16}
+                      className={`transition-transform ${
+                        isUserDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
 
                   {/* Dropdown Menu */}
@@ -146,7 +171,7 @@ const PublicHeader = () => {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="px-4 py-2">
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600">Role:</span>
@@ -155,7 +180,7 @@ const PublicHeader = () => {
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className="border-t border-gray-200 pt-2">
                         <button
                           onClick={handleLogout}
@@ -221,7 +246,7 @@ const PublicHeader = () => {
                     {item.name}
                   </a>
                 ))}
-                
+
                 {/* Mobile User Section */}
                 {data && data.username ? (
                   <div className="mt-4 pt-4 border-t border-gray-200">
@@ -235,9 +260,7 @@ const PublicHeader = () => {
                         <p className="text-sm font-medium text-gray-900">
                           {data.full_name || data.username}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {data.email}
-                        </p>
+                        <p className="text-xs text-gray-500">{data.email}</p>
                         <p className="text-xs text-gray-500 capitalize">
                           Role: {data.role}
                         </p>
@@ -253,7 +276,7 @@ const PublicHeader = () => {
                   </div>
                 ) : (
                   <div className="mt-4 pt-4 border-t border-gray-200 flex justify-center space-x-6">
-                    <button 
+                    <button
                       onClick={() => setIsAuthModalOpen(true)}
                       className="p-2"
                     >
@@ -270,6 +293,10 @@ const PublicHeader = () => {
         )}
       </header>
       <AuthModal isModalOpen={isAuthModalOpen} onClose={handleCloseModal} />
+      <AdminRegisterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 };
