@@ -8,10 +8,12 @@ import {
   FiMoon,
   FiChevronDown,
   FiLogOut,
+  FiSettings,
 } from "react-icons/fi";
 import AuthModal from "./AuthModal";
 import { useUserInfoQuery } from "../../store/api/authEndpoints";
 import AdminRegisterModal from "./AdminRegisterModal";
+import { useNavigate } from "react-router-dom";
 
 const PublicHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,6 +25,7 @@ const PublicHeader = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   const { data } = useUserInfoQuery();
   console.log("user info", data);
@@ -57,6 +60,11 @@ const PublicHeader = () => {
     console.log("Logging out...");
     setIsUserDropdownOpen(false);
     // You might want to call a logout mutation here
+  };
+
+  const handleAdminPanel = () => {
+    navigate("/admin");
+    setIsUserDropdownOpen(false);
   };
 
   const navItems = [
@@ -180,6 +188,19 @@ const PublicHeader = () => {
                           </span>
                         </div>
                       </div>
+
+                      {/* Admin Panel Link - only show for admin users */}
+                      {data.role === "admin" && (
+                        <div className="border-t border-gray-200 pt-2">
+                          <button
+                            onClick={handleAdminPanel}
+                            className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+                          >
+                            <FiSettings size={16} />
+                            <span>Admin Panel</span>
+                          </button>
+                        </div>
+                      )}
 
                       <div className="border-t border-gray-200 pt-2">
                         <button
