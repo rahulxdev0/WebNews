@@ -30,6 +30,10 @@ function App() {
             <Route path='manage-area' element={<ManageAreas />} />
             <Route path='manage-news' element={<ManageNews />} />
           </Route>
+          {/* Allow admin users to access home route */}
+          <Route path="/home" element={<PublicLayout />} >
+            <Route index element={<Home />}/>
+          </Route>
         </Routes>
       </BrowserRouter>
     </>

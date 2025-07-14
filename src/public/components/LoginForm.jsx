@@ -1,8 +1,10 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../store/api/authEndpoints";
 
 const LoginForm = ({ onLoginSuccess }) => {
+  const navigate = useNavigate();
   const [login, { isLoading }] = useLoginMutation();
   const {
     register,
@@ -18,6 +20,11 @@ const LoginForm = ({ onLoginSuccess }) => {
       console.log("Login successful:", response);
       reset(); // Clear form fields
       onLoginSuccess(); // Close modal
+
+      // Redirect based on user role
+      if (response.user && response.user.role === "admin") {
+        navigate("/admin");
+      }
     } catch (error) {
       console.error("Login error:", error);
     }
