@@ -1,40 +1,73 @@
 import React from 'react';
 import { FiBookmark, FiShare2, FiClock } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
-const NewsCard = ({ title, category, excerpt, time, image, isFeatured = false }) => {
+const NewsCard = ({ title, category, excerpt, time, image, id, isFeatured = false }) => {
   return (
-    <div className={`group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${isFeatured ? 'md:col-span-2' : ''}`}>
-      <div className="relative">
-        <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-48" />
-        <div className="absolute top-4 left-4 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-          {category}
+    <Link to={`/news/${id}`} className="block group">
+      <article className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 ${isFeatured ? 'md:col-span-2' : ''}`}>
+        <div className="relative overflow-hidden">
+          {image ? (
+            <img 
+              src={image} 
+              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 border-dashed-2 border-red-800"
+            />
+          ) : (
+            <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          )}
+          
+          {/* Category badge */}
+          <div className="absolute top-4 left-4">
+            <span className="bg-red-700 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              {category}
+            </span>
+          </div>
+          
+          {/* Action buttons */}
+          <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button 
+              className="bg-white/90 hover:bg-white text-gray-700 p-2 rounded-full transition-all shadow-sm"
+              onClick={(e) => e.preventDefault()}
+            >
+              <FiBookmark size={16} />
+            </button>
+            <button 
+              className="bg-white/90 hover:bg-white text-gray-700 p-2 rounded-full transition-all shadow-sm"
+              onClick={(e) => e.preventDefault()}
+            >
+              <FiShare2 size={16} />
+            </button>
+          </div>
         </div>
-        <div className="absolute top-4 right-4 flex space-x-2">
-          <button className="bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full transition-all">
-            <FiBookmark size={16} />
-          </button>
-          <button className="bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full transition-all">
-            <FiShare2 size={16} />
-          </button>
+        
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-gray-500 text-sm flex items-center">
+              <FiClock className="mr-1" size={14} />
+              {time}
+            </span>
+          </div>
+          
+          <h3 className={`font-bold text-gray-900 mb-2 group-hover:text-red-700 transition-colors line-clamp-2 ${isFeatured ? 'text-2xl' : 'text-lg'}`}>
+            {title}
+          </h3>
+          
+          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+            {excerpt}
+          </p>
+          
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <span className="text-red-700 text-sm font-medium group-hover:text-red-800 transition-colors">
+              Read more →
+            </span>
+          </div>
         </div>
-      </div>
-      <div className="p-5">
-        <div className="flex items-center text-sm text-gray-500 mb-2">
-          <FiClock className="mr-1" />
-          <span>{time} ago</span>
-        </div>
-        <h3 className={`font-bold mb-2 ${isFeatured ? 'text-2xl' : 'text-xl'} group-hover:text-red-700 transition-colors`}>
-          {title}
-        </h3>
-        <p className="text-gray-600">{excerpt}</p>
-        <button className="mt-4 text-red-700 font-medium hover:text-blue-800 flex items-center transition-colors">
-          Read more
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-    </div>
+      </article>
+    </Link>
   );
 };
 
