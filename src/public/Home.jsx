@@ -4,7 +4,6 @@ import { useGetNewsByCategoryQuery, useGetNewsListQuery } from '../store/api/new
 import { useGetCategoriesQuery } from '../store/api/categoryEndpoints';
 import { Link } from 'react-router-dom';
 
-
 const NewsCard = ({ title, category, excerpt, time, image, isFeatured = false }) => {
   return (
     <div className={`group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${isFeatured ? 'md:col-span-2' : ''}`}>
@@ -42,13 +41,13 @@ const NewsCard = ({ title, category, excerpt, time, image, isFeatured = false })
   );
 };
 
-const CategorySection = ({ title, newsItems, categoryId }) => {
+const CategorySection = ({ title, newsItems, categoryId, newsCount = 0 }) => {
   return (
     <section className="mb-12">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
         <Link to={`/category/${categoryId}`} className="text-red-700 font-medium hover:text-blue-800 transition-colors">
-          View all
+          View all {newsCount > 0 && `(${newsCount})`}
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -113,47 +112,100 @@ const NewsletterSignup = () => {
   );
 };
 
+// Custom hook to fetch all categories with their news
+const useCategoriesWithNews = () => {
+  const { data: categories, isLoading: categoriesLoading } = useGetCategoriesQuery();
+  
+  // Create an array of category IDs for conditional fetching
+  const categoryIds = categories?.map(cat => cat.id) || [];
+  
+  // Dynamically fetch news for each category
+  const categoryNewsQueries = categoryIds.map(id => 
+    useGetNewsByCategoryQuery(id, { skip: !id })
+  );
+  
+  // Transform data into a more usable format
+  const categoriesWithNews = categories?.map((category, index) => ({
+    ...category,
+    news: categoryNewsQueries[index]?.data || [],
+    isLoading: categoryNewsQueries[index]?.isLoading || false,
+    error: categoryNewsQueries[index]?.error || null
+  })) || [];
+  
+  return {
+    categoriesWithNews,
+    isLoading: categoriesLoading,
+    hasData: categories && categories.length > 0
+  };
+};
+
 const Home = () => {
-  const {data: categories} = useGetCategoriesQuery();
-
-  // Fetch news for Politics category (id: 5)
-  const { data: politicsNews } = useGetNewsByCategoryQuery(5);
+  const { categoriesWithNews, isLoading, hasData } = useCategoriesWithNews();
   
-  // Fetch news for Sports category (id: 6)
-  const { data: sportsNews } = useGetNewsByCategoryQuery(6);
-  
-  // Fetch news for Technology category (id: 7)
-  const { data: technologyNews } = useGetNewsByCategoryQuery(7);
-  
-  // Fetch news for Health category (id: 8)
-  const { data: healthNews } = useGetNewsByCategoryQuery(8);
-  
-  // Fetch news for Entertainment category (id: 9)
-  const { data: entertainmentNews } = useGetNewsByCategoryQuery(9);
-
   // Transform API news data to component props format and limit to 3 items
   const transformNewsData = (newsArray, categoryName, limit = 3) => {
-    if (!newsArray) return [];
+    if (!newsArray || newsArray.length === 0) return [];
     
     return newsArray.slice(0, limit).map(item => ({
       title: item.title,
       category: categoryName,
       excerpt: item.content ? item.content.substring(0, 100) + '...' : 'No description available',
-      time: new Date(item.created_at).toLocaleDateString(),
+      time: item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Unknown date',
       image: item.image,
       id: item.id
     }));
   };
 
-  console.log(categories);
+  // Generate trending news from all categories
+  const generateTrendingNews = () => {
+    const allNews = [];
+    
+    categoriesWithNews.forEach(category => {
+      if (category.news && category.news.length > 0) {
+        category.news.forEach(newsItem => {
+          allNews.push({
+            ...newsItem,
+            categoryName: category.name
+          });
+        });
+      }
+    });
+    
+    // Sort by created_at (most recent first) and take top 5
+    return allNews
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 5)
+      .map((item, index) => ({
+        rank: index + 1,
+        title: item.title,
+        category: item.categoryName
+      }));
+  };
 
-  const trendingNews = [
-    { rank: 1, title: "Olympic Athlete Breaks World Record in 100m Final", category: "Sports" },
-    { rank: 2, title: "Tech Giant Unveils Revolutionary Smartphone with Foldable Display", category: "Technology" },
-    { rank: 3, title: "Celebrity Chef Opens New Restaurant in Downtown", category: "Entertainment" },
-    { rank: 4, title: "Scientists Discover New Species in Amazon Rainforest", category: "Science" },
-    { rank: 5, title: "Stock Markets Reach All-Time High Amid Economic Recovery", category: "Business" }
-  ];
+  const trendingNews = generateTrendingNews();
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading news...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if no data
+  if (!hasData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">No categories found. Please check your connection and try again.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -162,44 +214,28 @@ const Home = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
-            {politicsNews && (
-              <CategorySection 
-                title="Politics" 
-                newsItems={transformNewsData(politicsNews, 'Politics')} 
-                categoryId={5}
-              />
-            )}
+            {categoriesWithNews.map((category) => {
+              const newsItems = transformNewsData(category.news, category.name);
+              
+              // Only render section if there are news items
+              if (newsItems.length === 0) return null;
+              
+              return (
+                <CategorySection 
+                  key={category.id}
+                  title={category.name} 
+                  newsItems={newsItems} 
+                  categoryId={category.id}
+                  newsCount={category.news?.length || 0}
+                />
+              );
+            })}
             
-            {technologyNews && (
-              <CategorySection 
-                title="Technology" 
-                newsItems={transformNewsData(technologyNews, 'Technology')} 
-                categoryId={7}
-              />
-            )}
-            
-            {entertainmentNews && (
-              <CategorySection 
-                title="Entertainment" 
-                newsItems={transformNewsData(entertainmentNews, 'Entertainment')} 
-                categoryId={9}
-              />
-            )}
-
-            {healthNews && (
-              <CategorySection 
-                title="Health" 
-                newsItems={transformNewsData(healthNews, 'Health')} 
-                categoryId={8}
-              />
-            )}
-
-            {sportsNews && (
-              <CategorySection 
-                title="Sports" 
-                newsItems={transformNewsData(sportsNews, 'Sports')} 
-                categoryId={6}
-              />
+            {/* Show message if no news available */}
+            {categoriesWithNews.every(cat => !cat.news || cat.news.length === 0) && (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">No news articles available at the moment.</p>
+              </div>
             )}
           </div>
           
@@ -207,9 +243,13 @@ const Home = () => {
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Trending Now</h3>
               <div>
-                {trendingNews.map((item, index) => (
-                  <TrendingItem key={index} {...item} />
-                ))}
+                {trendingNews.length > 0 ? (
+                  trendingNews.map((item, index) => (
+                    <TrendingItem key={index} {...item} />
+                  ))
+                ) : (
+                  <p className="text-gray-500">No trending news available</p>
+                )}
               </div>
             </div>
             
@@ -218,15 +258,17 @@ const Home = () => {
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Popular Categories</h3>
               <div className="space-y-2">
-                {categories?.map((category, index) => (
-                  <a 
+                {categoriesWithNews.map((category) => (
+                  <Link 
                     key={category.id} 
-                    href="#" 
+                    to={`/category/${category.id}`}
                     className="flex justify-between items-center py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <span className="text-gray-700">{category.name}</span>
-                    <span className="bg-gray-100 text-gray-500 text-xs font-medium px-2 py-1 rounded-full">24</span>
-                  </a>
+                    <span className="bg-gray-100 text-gray-500 text-xs font-medium px-2 py-1 rounded-full">
+                      {category.news?.length || 0}
+                    </span>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -259,9 +301,11 @@ const Home = () => {
             <div>
               <h4 className="text-lg font-bold mb-4">Categories</h4>
               <ul className="space-y-2">
-                {['World', 'Politics', 'Business', 'Technology', 'Health', 'Sports', 'Entertainment', 'Science'].map((category, index) => (
-                  <li key={index}>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors">{category}</a>
+                {categoriesWithNews.map((category) => (
+                  <li key={category.id}>
+                    <Link to={`/category/${category.id}`} className="text-gray-400 hover:text-white transition-colors">
+                      {category.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
