@@ -1,6 +1,6 @@
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import PublicLayout from './public/publicLayout';
+import PublicLayout from './public/PublicLayout';
 import Home from './public/Home';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
