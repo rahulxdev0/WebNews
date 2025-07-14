@@ -103,7 +103,7 @@ const NewsDetail = () => {
             {news.image && (
               <div className="px-6 mb-6">
                 <img
-                  src={news.image}
+                  src="https://picsum.photos/600/300"
                   alt={news.title}
                   className="w-full h-64 md:h-96 object-cover rounded-xl"
                 />
@@ -153,23 +153,6 @@ const NewsDetail = () => {
 
             {/* Add Comment Form */}
             <form onSubmit={handleCommentSubmit} className="mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <input
-                  type="text"
-                  placeholder="Your Name *"
-                  value={newComment.name}
-                  onChange={(e) => setNewComment({ ...newComment, name: e.target.value })}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Your Email"
-                  value={newComment.email}
-                  onChange={(e) => setNewComment({ ...newComment, email: e.target.value })}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                />
-              </div>
               <textarea
                 placeholder="Write your comment... *"
                 rows="4"
