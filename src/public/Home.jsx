@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FiSearch, FiMenu, FiX, FiUser, FiBookmark, FiShare2, FiClock } from 'react-icons/fi';
 import { useGetNewsByCategoryQuery, useGetNewsListQuery } from '../store/api/newsEndpoints';
 import { useGetCategoriesQuery } from '../store/api/categoryEndpoints';
+import { Link } from 'react-router-dom';
 
 
 const NewsCard = ({ title, category, excerpt, time, image, isFeatured = false }) => {
@@ -41,17 +42,17 @@ const NewsCard = ({ title, category, excerpt, time, image, isFeatured = false })
   );
 };
 
-const CategorySection = ({ title, newsItems }) => {
+const CategorySection = ({ title, newsItems, categoryId }) => {
   return (
     <section className="mb-12">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-        <a href="#" className="text-red-700 font-medium hover:text-blue-800 transition-colors">
+        <Link to={`/category/${categoryId}`} className="text-red-700 font-medium hover:text-blue-800 transition-colors">
           View all
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-        </a>
+        </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {newsItems.map((item, index) => (
@@ -114,7 +115,6 @@ const NewsletterSignup = () => {
 
 const Home = () => {
   const {data: categories} = useGetCategoriesQuery();
-  const [categoryNews, setCategoryNews] = useState({});
 
   // Fetch news for Politics category (id: 5)
   const { data: politicsNews } = useGetNewsByCategoryQuery(5);
@@ -131,11 +131,11 @@ const Home = () => {
   // Fetch news for Entertainment category (id: 9)
   const { data: entertainmentNews } = useGetNewsByCategoryQuery(9);
 
-  // Transform API news data to component props format
-  const transformNewsData = (newsArray, categoryName) => {
+  // Transform API news data to component props format and limit to 3 items
+  const transformNewsData = (newsArray, categoryName, limit = 3) => {
     if (!newsArray) return [];
     
-    return newsArray.map(item => ({
+    return newsArray.slice(0, limit).map(item => ({
       title: item.title,
       category: categoryName,
       excerpt: item.content ? item.content.substring(0, 100) + '...' : 'No description available',
@@ -166,6 +166,7 @@ const Home = () => {
               <CategorySection 
                 title="Politics" 
                 newsItems={transformNewsData(politicsNews, 'Politics')} 
+                categoryId={5}
               />
             )}
             
@@ -173,6 +174,7 @@ const Home = () => {
               <CategorySection 
                 title="Technology" 
                 newsItems={transformNewsData(technologyNews, 'Technology')} 
+                categoryId={7}
               />
             )}
             
@@ -180,6 +182,7 @@ const Home = () => {
               <CategorySection 
                 title="Entertainment" 
                 newsItems={transformNewsData(entertainmentNews, 'Entertainment')} 
+                categoryId={9}
               />
             )}
 
@@ -187,6 +190,7 @@ const Home = () => {
               <CategorySection 
                 title="Health" 
                 newsItems={transformNewsData(healthNews, 'Health')} 
+                categoryId={8}
               />
             )}
 
@@ -194,6 +198,7 @@ const Home = () => {
               <CategorySection 
                 title="Sports" 
                 newsItems={transformNewsData(sportsNews, 'Sports')} 
+                categoryId={6}
               />
             )}
           </div>

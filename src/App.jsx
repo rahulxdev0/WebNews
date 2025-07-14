@@ -2,6 +2,7 @@ import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PublicLayout from './public/PublicLayout';
 import Home from './public/Home';
+import CategoryNews from './public/CategoryNews';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
 import ManageCategory from './admin/manageCategory/ManageCategory';
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<PublicLayout />} >
             <Route index element={<Home />}/>
+            <Route path="category/:categoryId" element={<CategoryNews />}/>
           </Route>
           <Route path="/admin" element={
             <ProtectedRoute requiredRole="admin">
@@ -33,6 +35,7 @@ function App() {
           {/* Allow admin users to access home route */}
           <Route path="/home" element={<PublicLayout />} >
             <Route index element={<Home />}/>
+            <Route path="category/:categoryId" element={<CategoryNews />}/>
           </Route>
         </Routes>
       </BrowserRouter>
