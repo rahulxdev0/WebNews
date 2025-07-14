@@ -2,8 +2,9 @@ import { BarChart3, FileText, Home, Settings, User, Users, MapPin, Map, Newspape
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Sidebar = ({ isOpen, closeSidebar }) => {
+const Sidebar = ({data, isLoading, isOpen, closeSidebar }) => {
   const [activeItem, setActiveItem] = useState('dashboard');
+  console.log("data in sidebar", data)
 
   const handleLinkClick = (itemId) => {
     setActiveItem(itemId);
@@ -131,10 +132,10 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  Admin User
+                 {data && data?.username}
                 </p>
                 <p className="text-xs text-gray-500 truncate">
-                  admin@portal.com
+                  {data && data?.email}
                 </p>
               </div>
             </div>

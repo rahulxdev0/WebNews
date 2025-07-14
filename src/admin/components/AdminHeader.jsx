@@ -13,10 +13,13 @@ import {
   ChevronDown,
   LogOut
 } from 'lucide-react';
+import { useUserInfoQuery } from '../../store/api/authEndpoints';
 
 // AdminHeader Component
 const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { data, isLoading } = useUserInfoQuery();
+  console.log("data in Header", data)
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-4 lg:px-6">
@@ -60,7 +63,7 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
               <User size={16} className="text-white" />
             </div>
             <span className="hidden md:block text-sm font-medium text-gray-700">
-              Admin User
+              {data.username}
             </span>
             <ChevronDown size={16} className="text-gray-400" />
           </button>
