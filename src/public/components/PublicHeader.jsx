@@ -27,12 +27,28 @@ const PublicHeader = () => {
 
   const { handleLogout, isLoggingOut } = useLogout();
 
-
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   const { data } = useUserInfoQuery();
   console.log("user info", data);
+
+  // Auto-open AuthModal after 5 seconds if user is not logged in
+  useEffect(() => {
+    let timeoutId;
+
+    if (data === undefined) {
+      timeoutId = setTimeout(() => {
+        setIsAuthModalOpen(true);
+      }, 5000);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [data]);
 
   // Handle scroll effect
   useEffect(() => {
@@ -58,7 +74,6 @@ const PublicHeader = () => {
   const handleCloseModal = () => {
     setIsAuthModalOpen(false);
   };
-
 
   const handleAdminPanel = () => {
     navigate("/admin");
