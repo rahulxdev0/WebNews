@@ -1,27 +1,44 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useGetNewsDetailQuery } from '../store/api/newsEndpoints';
+import { useCreateCommentMutation } from '../store/api/commentEndpoints';
+import { useUserInfoQuery } from '../store/api/authEndpoints';
+import AuthModal from './components/AuthModal';
 
 const NewsDetail = () => {
   const { newsId } = useParams();
   const { data: news, isLoading, error } = useGetNewsDetailQuery(newsId);
+  const { data: user } = useUserInfoQuery();
+  const [createComment, { isLoading: isCreatingComment }] = useCreateCommentMutation();
+  
   const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState({ name: '', email: '', comment: '' });
+  const [newComment, setNewComment] = useState({ comment: '' });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    if (!newComment.name.trim() || !newComment.comment.trim()) return;
+    
+    // Check if user is logged in
+    if (!user || user === undefined) {
+      setIsAuthModalOpen(true);
+      return;
+    }
 
-    const comment = {
-      id: Date.now(),
-      name: newComment.name,
-      email: newComment.email,
-      comment: newComment.comment,
-      createdAt: new Date().toISOString(),
-    };
+    if (!newComment.comment.trim()) return;
 
-    setComments([comment, ...comments]);
-    setNewComment({ name: '', email: '', comment: '' });
+    try {
+      const commentData = {
+        content: newComment.comment,
+        news: parseInt(newsId),
+      };
+
+      await createComment(commentData).unwrap();
+      setNewComment({ comment: '' });
+      // Optionally refetch comments or update local state
+    } catch (error) {
+      console.error('Failed to create comment:', error);
+      // Handle error (show toast notification, etc.)
+    }
   };
 
   if (isLoading) {
@@ -154,18 +171,20 @@ const NewsDetail = () => {
             {/* Add Comment Form */}
             <form onSubmit={handleCommentSubmit} className="mb-8">
               <textarea
-                placeholder="Write your comment... *"
+                placeholder={user ? "Write your comment... *" : "Please login to write a comment"}
                 rows="4"
                 value={newComment.comment}
-                onChange={(e) => setNewComment({ ...newComment, comment: e.target.value })}
+                onChange={(e) => setNewComment({ comment: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent mb-4"
                 required
+                disabled={!user}
               ></textarea>
               <button
                 type="submit"
-                className="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 transition-colors"
+                disabled={!user || isCreatingComment}
+                className="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                Post Comment
+                {isCreatingComment ? 'Posting...' : user ? 'Post Comment' : 'Login to Comment'}
               </button>
             </form>
 
@@ -201,6 +220,12 @@ const NewsDetail = () => {
           </div>
         </div>
       </div>
+      
+      {/* Auth Modal */}
+      <AuthModal 
+        isModalOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
     </div>
   );
 };
