@@ -14,6 +14,7 @@ import AuthModal from "./AuthModal";
 import { useUserInfoQuery } from "../../store/api/authEndpoints";
 import AdminRegisterModal from "./AdminRegisterModal";
 import { useNavigate } from "react-router-dom";
+import useLogout from "../../hooks/useLogout";
 
 const PublicHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,6 +24,9 @@ const PublicHeader = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { handleLogout, isLoggingOut } = useLogout();
+
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -55,12 +59,6 @@ const PublicHeader = () => {
     setIsAuthModalOpen(false);
   };
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    console.log("Logging out...");
-    setIsUserDropdownOpen(false);
-    // You might want to call a logout mutation here
-  };
 
   const handleAdminPanel = () => {
     navigate("/admin");
@@ -205,10 +203,11 @@ const PublicHeader = () => {
                       <div className="border-t border-gray-200 pt-2">
                         <button
                           onClick={handleLogout}
+                          disabled={isLoggingOut}
                           className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                         >
                           <FiLogOut size={16} />
-                          <span>Logout</span>
+                          <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
                         </button>
                       </div>
                     </div>
