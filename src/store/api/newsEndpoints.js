@@ -35,10 +35,10 @@ export const newsEndpoints = baseApi.injectEndpoints({
 
     // Update entire news article
     updateNews: builder.mutation({
-      query: ({ id, ...newsData }) => ({
+      query: ({ id, formData }) => ({
         url: `/news/${id}/`,
         method: 'PUT',
-        body: newsData,
+        body: formData,
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: 'News', id },
@@ -48,10 +48,10 @@ export const newsEndpoints = baseApi.injectEndpoints({
 
     // Partial update of news article
     partialUpdateNews: builder.mutation({
-      query: ({ id, ...patch }) => ({
+      query: ({ id, formData }) => ({
         url: `/news/${id}/`,
         method: 'PATCH',
-        body: patch,
+        body: formData,
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: 'News', id },

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Select, message, Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { 
-  useCreateNewsMutation, 
-  usePartialUpdateNewsMutation 
-} from '../../store/api/newsEndpoints';
+
 import { useGetCategoriesQuery } from '../../store/api/categoryEndpoints';
 import { useGetAreasQuery } from '../../store/api/areaEndpoints';
+import { useCreateNewsMutation, usePartialUpdateNewsMutation } from '../../store/api/newsEndpoints';
 
 const { TextArea } = Input;
 
@@ -48,12 +46,14 @@ const AddEditNewsModal = ({ visible, onCancel, news }) => {
       formData.append('content', values.content);
       formData.append('category_id', values.category_id);
       formData.append('area_id', values.area_id);
+      
+      // Handle image upload properly
       if (fileList.length > 0 && fileList[0].originFileObj) {
         formData.append('image', fileList[0].originFileObj);
       }
 
       if (news) {
-        await updateNews({ id: news.id, ...formData }).unwrap();
+        await updateNews({ id: news.id, formData }).unwrap();
         messageApi.success('News updated successfully');
       } else {
         await createNews(formData).unwrap();
@@ -61,6 +61,7 @@ const AddEditNewsModal = ({ visible, onCancel, news }) => {
       }
       onCancel();
     } catch (err) {
+      console.error('Error saving news:', err);
       messageApi.error('Failed to save news');
     }
   };

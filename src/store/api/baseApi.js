@@ -8,10 +8,10 @@ export const baseApi = createApi({
     baseUrl: apiUrl,
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
-    // For debugging
-     console.log('Cookies being sent:', document.cookie);
-    return headers;
-  },
+      // For debugging
+      console.log('Cookies being sent:', document.cookie);
+      return headers;
+    },
   }),
   tagTypes: ['Auth', 'Categories', 'Districts', 'Areas', 'News', 'Post', 'Comment'],
   endpoints: () => ({}),
