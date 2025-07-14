@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { FiSearch, FiMenu, FiX, FiUser, FiBookmark, FiShare2, FiClock } from 'react-icons/fi';
+import { useGetNewsByCategoryQuery, useGetNewsListQuery } from '../store/api/newsEndpoints';
+import { useGetCategoriesQuery } from '../store/api/categoryEndpoints';
 
 
 const NewsCard = ({ title, category, excerpt, time, image, isFeatured = false }) => {
@@ -111,27 +113,39 @@ const NewsletterSignup = () => {
 };
 
 const Home = () => {
+  const {data: categories} = useGetCategoriesQuery();
+  const [categoryNews, setCategoryNews] = useState({});
 
-  const politicsNews = [
-    {
-      title: "New Legislation Aims to Reform Healthcare System",
-      category: "Politics",
-      excerpt: "Bipartisan bill proposes significant changes to healthcare access and affordability.",
-      time: "3 hours"
-    },
-    {
-      title: "Foreign Minister Meets with Counterparts to Discuss Security",
-      category: "Politics",
-      excerpt: "Regional security and economic cooperation top the agenda in high-level talks.",
-      time: "5 hours"
-    },
-    {
-      title: "Election Commission Announces New Voting Measures",
-      category: "Politics",
-      excerpt: "Enhanced security protocols to be implemented for upcoming national elections.",
-      time: "8 hours"
-    }
-  ];
+  // Fetch news for Politics category (id: 5)
+  const { data: politicsNews } = useGetNewsByCategoryQuery(5);
+  
+  // Fetch news for Sports category (id: 6)
+  const { data: sportsNews } = useGetNewsByCategoryQuery(6);
+  
+  // Fetch news for Technology category (id: 7)
+  const { data: technologyNews } = useGetNewsByCategoryQuery(7);
+  
+  // Fetch news for Health category (id: 8)
+  const { data: healthNews } = useGetNewsByCategoryQuery(8);
+  
+  // Fetch news for Entertainment category (id: 9)
+  const { data: entertainmentNews } = useGetNewsByCategoryQuery(9);
+
+  // Transform API news data to component props format
+  const transformNewsData = (newsArray, categoryName) => {
+    if (!newsArray) return [];
+    
+    return newsArray.map(item => ({
+      title: item.title,
+      category: categoryName,
+      excerpt: item.content ? item.content.substring(0, 100) + '...' : 'No description available',
+      time: new Date(item.created_at).toLocaleDateString(),
+      image: item.image,
+      id: item.id
+    }));
+  };
+
+  console.log(categories);
 
   const trendingNews = [
     { rank: 1, title: "Olympic Athlete Breaks World Record in 100m Final", category: "Sports" },
@@ -148,49 +162,40 @@ const Home = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
-            <CategorySection title="Politics" newsItems={politicsNews} />
+            {politicsNews && (
+              <CategorySection 
+                title="Politics" 
+                newsItems={transformNewsData(politicsNews, 'Politics')} 
+              />
+            )}
             
-            <CategorySection title="Technology" newsItems={[
-              {
-                title: "New AI Model Can Write Code Better Than Humans",
-                category: "Technology",
-                excerpt: "Researchers develop an AI system that outperforms human programmers in efficiency tests.",
-                time: "1 hour"
-              },
-              {
-                title: "SpaceX Launches Mission to International Space Station",
-                category: "Technology",
-                excerpt: "Private space company successfully sends crew and supplies to orbiting laboratory.",
-                time: "3 hours"
-              },
-              {
-                title: "Cybersecurity Experts Warn of New Phishing Threat",
-                category: "Technology",
-                excerpt: "Sophisticated email scam targeting corporate networks detected by security firms.",
-                time: "7 hours"
-              }
-            ]} />
+            {technologyNews && (
+              <CategorySection 
+                title="Technology" 
+                newsItems={transformNewsData(technologyNews, 'Technology')} 
+              />
+            )}
             
-            <CategorySection title="Entertainment" newsItems={[
-              {
-                title: "Award-Winning Director Announces New Film Project",
-                category: "Entertainment",
-                excerpt: "Details emerge about the upcoming historical drama featuring A-list actors.",
-                time: "2 hours"
-              },
-              {
-                title: "Music Festival Returns After Three-Year Hiatus",
-                category: "Entertainment",
-                excerpt: "Popular summer event announces impressive lineup of international artists.",
-                time: "5 hours"
-              },
-              {
-                title: "Streaming Service Hits Record Subscriber Numbers",
-                category: "Entertainment",
-                excerpt: "Platform adds 10 million new users following exclusive content releases.",
-                time: "9 hours"
-              }
-            ]} />
+            {entertainmentNews && (
+              <CategorySection 
+                title="Entertainment" 
+                newsItems={transformNewsData(entertainmentNews, 'Entertainment')} 
+              />
+            )}
+
+            {healthNews && (
+              <CategorySection 
+                title="Health" 
+                newsItems={transformNewsData(healthNews, 'Health')} 
+              />
+            )}
+
+            {sportsNews && (
+              <CategorySection 
+                title="Sports" 
+                newsItems={transformNewsData(sportsNews, 'Sports')} 
+              />
+            )}
           </div>
           
           <div className="lg:col-span-1 space-y-8">
@@ -208,13 +213,13 @@ const Home = () => {
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Popular Categories</h3>
               <div className="space-y-2">
-                {['Technology', 'Business', 'Politics', 'Health', 'Sports', 'Entertainment', 'Science', 'Travel'].map((category, index) => (
+                {categories?.map((category, index) => (
                   <a 
-                    key={index} 
+                    key={category.id} 
                     href="#" 
                     className="flex justify-between items-center py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    <span className="text-gray-700">{category}</span>
+                    <span className="text-gray-700">{category.name}</span>
                     <span className="bg-gray-100 text-gray-500 text-xs font-medium px-2 py-1 rounded-full">24</span>
                   </a>
                 ))}

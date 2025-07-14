@@ -23,6 +23,18 @@ export const newsEndpoints = baseApi.injectEndpoints({
       providesTags: (result, error, id) => [{ type: 'News', id }],
     }),
 
+    getNewsByCategory: builder.query({
+      query: (categoryId) => ({
+        url: `/news/`,
+        method: 'GET',
+        params: { category: categoryId },
+      }),
+      providesTags: (result = []) => [
+        ...result.map(({ id }) => ({ type: 'News', id })),
+        { type: 'News', id: 'CATEGORY_LIST' },
+      ],
+    }),
+
     // Create new news article
     createNews: builder.mutation({
       query: (newsData) => ({
@@ -77,6 +89,7 @@ export const {
   useGetNewsListQuery,
   useGetNewsDetailQuery,
   useCreateNewsMutation,
+  useGetNewsByCategoryQuery,
   useUpdateNewsMutation,
   usePartialUpdateNewsMutation,
   useDeleteNewsMutation,
