@@ -12,7 +12,7 @@ const transformNewsData = (newsArray, categoryName) => {
   return newsArray.map(news => ({
     title: news.title || 'Untitled',
     category: categoryName || news.category?.name || 'General',
-    excerpt: news.excerpt || news.description || 'No description available',
+    excerpt: news.excerpt || news.description || news.content || 'No description available',
     time: news.created_at ? new Date(news.created_at).toLocaleDateString() : 'Recently',
     image: news.image || null,
     id: news.id

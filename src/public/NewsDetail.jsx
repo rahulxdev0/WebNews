@@ -103,8 +103,11 @@ const NewsDetail = () => {
             {news.image && (
               <div className="px-6 mb-6">
                 <img
-                  src="https://picsum.photos/600/300"
+                  src={news.image}
                   alt={news.title}
+                  onError={(e) => {
+                    e.target.src = 'https://picsum.photos/600/300';
+                  }}
                   className="w-full h-64 md:h-96 object-cover rounded-xl"
                 />
               </div>
