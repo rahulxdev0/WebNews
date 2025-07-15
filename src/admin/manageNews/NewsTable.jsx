@@ -5,6 +5,7 @@ import { useDeleteNewsMutation } from '../../store/api/newsEndpoints';
 const NewsTable = ({ data, loading, onEdit }) => {
   const [deleteNews] = useDeleteNewsMutation();
   const [messageApi, contextHolder] = message.useMessage();
+  console.log("data in news table", data)
 
   const handleDelete = async (id) => {
     try {

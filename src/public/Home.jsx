@@ -64,6 +64,7 @@ const TrendingItem = ({ rank, title, category }) => {
 // Category component to fetch and display news for a specific category
 const CategoryNewsSection = ({ category }) => {
   const { data: categoryNews, isLoading: newsLoading, error } = useGetNewsByCategoryQuery(category.id);
+  console.log("image in home", categoryNews)
   
   if (newsLoading) {
     return (
