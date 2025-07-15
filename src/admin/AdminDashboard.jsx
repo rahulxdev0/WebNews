@@ -126,7 +126,7 @@ const AdminDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="text-sm">
-                          <p className="font-medium text-indigo-600">{news.category}</p>
+                          <p className="font-medium text-indigo-600">{news.category?.name}</p>
                           <p className="text-gray-900">{news.title}</p>
                         </div>
                       </div>
