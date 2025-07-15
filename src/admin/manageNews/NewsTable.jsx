@@ -43,13 +43,26 @@ const NewsTable = ({ data, loading, onEdit }) => {
         </Tag>
       ),
     },
-    {
-      title: 'Image',
-      key: 'image',
-      render: (_, record) => (
-        record.image ? <Image src={record.image} width={50} /> : 'No Image'
-      ),
-    },
+    // {
+    //   title: 'Image',
+    //   key: 'image',
+    //   render: (_, record) => (
+    //     record.image ? <Image src={record.image} width={50} /> : 'No Image'
+    //   ),
+    // },
+    // In your table columns configuration
+{
+  title: 'Image',
+  dataIndex: 'image',
+  key: 'image',
+  render: (image) => image ? (
+    <img 
+      src={image} 
+      alt="News" 
+      style={{ width: 50, height: 50, objectFit: 'cover' }}
+    />
+  ) : 'No image',
+},
     {
       title: 'Date',
       dataIndex: 'created_at',
