@@ -10,17 +10,44 @@ import {
   AlertCircle,
   Calendar
 } from 'lucide-react';
+import { useGetNewsListQuery } from '../store/api/newsEndpoints';
+import { useGetCategoriesQuery } from '../store/api/categoryEndpoints';
 
 const AdminDashboard = () => {
   // Sample data - replace with real data from your API
+  const {data: newsData, isLoading: newsLoading, error: newsError} = useGetNewsListQuery();
+  const {data: categories, isLoading: categoriesLoading} = useGetCategoriesQuery();
+
+  // Handle the case where newsData might be a single object or array
+  let newsArray = [];
+  if (newsData) {
+    if (Array.isArray(newsData)) {
+      newsArray = newsData;
+    } else if (typeof newsData === 'object') {
+      newsArray = [newsData]; // Convert single object to array
+    }
+  }
+
+  const totalNews = newsArray.length;
+  const totalCategories = categories ? (Array.isArray(categories) ? categories.length : 1) : 0;
+
+  console.log("News Data:", newsData);
+
   const stats = [
     { title: 'Total Users', value: '1,248', icon: Users, change: '+12%', trend: 'up' },
-    { title: 'Total News', value: '3,784', icon: Newspaper, change: '+5%', trend: 'up' },
-    { title: 'Categories', value: '24', icon: LayoutGrid, change: '+2', trend: 'up' },
+    { title: 'Total News', value: totalNews.toString(), icon: Newspaper, change: '+5%', trend: 'up' },
+    { title: 'Categories', value: totalCategories.toString(), icon: LayoutGrid, change: '+2', trend: 'up' },
     { title: 'Active Sessions', value: '86', icon: Activity, change: '-3%', trend: 'down' }
   ];
 
-  const recentNews = [
+  // Use actual data if available, otherwise fall back to sample data
+  const recentNews = newsArray.length > 0 ? newsArray.slice(-4).map((item, index) => ({
+    id: item.id || index + 1,
+    title: String(item.name || item.title || 'Untitled News'),
+    category: String(item.district?.name || item.category || 'General'),
+    date: String(item.created_at || item.date || new Date().toISOString().split('T')[0]),
+    views: String(item.views || `${Math.floor(Math.random() * 20) + 1}.${Math.floor(Math.random() * 9)}k`)
+  })) : [
     { id: 1, title: 'Global Climate Summit Concludes', category: 'Politics', date: '2023-06-15', views: '12.4k' },
     { id: 2, title: 'New Breakthrough in Quantum Computing', category: 'Technology', date: '2023-06-14', views: '8.7k' },
     { id: 3, title: 'Stock Markets Reach All-Time High', category: 'Business', date: '2023-06-13', views: '5.2k' },
@@ -37,6 +64,27 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="">
+        {/* Loading states */}
+        {(newsLoading || categoriesLoading) && (
+          <div className="text-center py-4">
+            <p className="text-gray-500">Loading dashboard data...</p>
+          </div>
+        )}
+        
+        {/* Error states */}
+        {newsError && (
+          <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+            <div className="flex">
+              <AlertCircle className="h-5 w-5 text-red-400" />
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">
+                  Error loading news data
+                </h3>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
           {stats.map((stat, index) => (
